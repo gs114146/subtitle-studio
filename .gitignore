@@ -3,6 +3,7 @@ __pycache__/
 *.pyc
 .DS_Store
 .cursor/
+Screen Recording*.gif
 work/*
 !work/.gitkeep
 output/*

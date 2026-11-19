@@ -6,6 +6,8 @@ You provide a voiceover and the SRT you already wrote. The app locks each word t
 
 **The SRT is the script.** A local speech model only supplies the timing.
 
+![Subtitle Studio demo](docs/demo.gif)
+
 ## Features
 
 - Word-by-word highlight preview with YouTube-style player controls
