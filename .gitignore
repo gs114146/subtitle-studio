@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+.cursor/
+work/*
+!work/.gitkeep
+output/*
+!output/.gitkeep
+models/*
+!models/.gitkeep

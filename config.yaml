@@ -1,0 +1,38 @@
+# Reused for every Short. Edit these in the app, or change this file directly.
+
+# English voiceovers are aligned on this Mac with wav2vec2.
+# The SRT stays the script. The model only finds when each word is spoken.
+model: wav2vec2-base-960h
+language: en
+cpu_threads: 4
+min_probability: 0.2
+
+font_path: assets/fonts/Montserrat-Bold.otf
+font_size: 76
+color_normal: "#FFFFFF"
+color_highlight: "#FFD43B"
+shadow_opacity: 0.55
+shadow_offset: 3
+
+# Edge margin from the chosen edge (top or bottom). Middle ignores this for centering.
+# Zone fraction keeps tall cues inside the chosen band.
+margin_bottom: 220
+bottom_fraction: 0.30
+max_width_ratio: 0.86
+line_spacing: 1.18
+
+# Pop plays once when a word becomes the highlighted word.
+animation_ms: 140
+pop_scale: 1.08
+# A gap shorter than this keeps the previous word highlighted so it does not flicker.
+pause_hold_ms: 220
+
+# portrait = 9:16 Shorts, landscape = 16:9. position = top | middle | bottom.
+orientation: portrait
+position: bottom
+width: 1080
+height: 1920
+fps: 30
+
+# prores4444 is the default. Use qtrle if Resolve shows a black background.
+codec: prores4444

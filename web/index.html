@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Subtitle Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/app.css">
+</head>
+<body>
+  <div class="atmosphere" aria-hidden="true">
+    <div class="orb orb-a"></div>
+    <div class="orb orb-b"></div>
+    <div class="grain"></div>
+  </div>
+
+  <header class="shell-header">
+    <div class="brand-lockup">
+      <div class="brand-mark" aria-hidden="true">
+        <span class="brand-mark-dot"></span>
+      </div>
+      <div>
+        <p class="brand-name">Subtitle Studio</p>
+        <p class="brand-tag">Word-accurate overlays for Shorts &amp; landscape</p>
+      </div>
+    </div>
+
+    <div id="status" class="status-chip" role="status">Load a voiceover and an SRT file.</div>
+  </header>
+
+  <nav class="workflow" aria-label="Workflow">
+    <ol class="steps">
+      <li class="step is-active" data-step="1">
+        <span class="step-index">1</span>
+        <span class="step-label">Load</span>
+      </li>
+      <li class="step" data-step="2">
+        <span class="step-index">2</span>
+        <span class="step-label">Align</span>
+      </li>
+      <li class="step" data-step="3">
+        <span class="step-index">3</span>
+        <span class="step-label">Refine</span>
+      </li>
+      <li class="step" data-step="4">
+        <span class="step-index">4</span>
+        <span class="step-label">Export</span>
+      </li>
+    </ol>
+  </nav>
+
+  <main class="layout">
+    <aside class="preview-column">
+      <section class="surface preview-surface">
+        <div class="panel-head">
+          <div>
+            <h2>Preview</h2>
+            <p class="hint">Review the highlight, then check an exact Resolve frame.</p>
+          </div>
+        </div>
+
+        <div class="preview-toolbar">
+          <div class="preview-bg-toggle" role="group" aria-label="Preview background">
+            <button type="button" class="preview-bg-option is-active" data-preview-bg="transparent">Transparent</button>
+            <button type="button" class="preview-bg-option" data-preview-bg="solid">Solid</button>
+          </div>
+          <button type="button" id="toggle-guide" class="btn btn-ghost guide-toggle is-on" title="Show or hide the subtitle safe-area guide" aria-pressed="true">Guide</button>
+          <button type="button" id="preview-mode-badge" class="preview-mode-badge is-live" title="Switch between live preview and exact Resolve frame">
+            Live
+          </button>
+        </div>
+
+        <div class="preview-toolbar preview-toolbar-secondary">
+          <div class="orient-chips" role="group" aria-label="Frame orientation">
+            <button type="button" class="orient-chip is-active" data-orientation="portrait">Portrait 9:16</button>
+            <button type="button" class="orient-chip" data-orientation="landscape">Landscape 16:9</button>
+          </div>
+          <button type="button" id="next-check" class="btn btn-secondary next-check" title="Jump to the next flagged word">Next Check</button>
+        </div>
+
+        <div id="stage" class="stage">
+          <div class="device" data-orientation="portrait">
+            <div class="device-notch" aria-hidden="true"></div>
+            <div class="stage-frame" data-preview-bg="transparent" data-orientation="portrait">
+              <div class="guide" data-position="bottom" aria-hidden="true">
+                <span class="guide-line"></span>
+              </div>
+              <div id="preview-empty" class="preview-empty">
+                <strong>Load audio + SRT</strong>
+                <span>to preview word highlights</span>
+              </div>
+              <div id="words"></div>
+              <img id="rendered" alt="Rendered subtitle frame" hidden>
+            </div>
+            <div class="device-home" aria-hidden="true"></div>
+          </div>
+        </div>
+
+        <div class="transport">
+          <audio id="audio" preload="auto"></audio>
+          <div class="scrubber-wrap">
+            <div id="cue-ticks" class="cue-ticks" aria-label="Cue markers"></div>
+            <input id="scrubber" class="scrubber" type="range" min="0" max="0" step="0.01" value="0" aria-label="Timeline">
+          </div>
+          <div class="transport-controls">
+            <button type="button" id="seek-back" class="transport-btn" title="Back 1 second" aria-label="Back 1 second">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M9.5 4 5.5 8l4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M11.5 4v8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            </button>
+            <button type="button" id="play" class="transport-btn transport-play" aria-label="Play">
+              <svg class="icon-play" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 3.2v9.6L13 8 5 3.2Z"/></svg>
+              <svg class="icon-pause" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" hidden><rect x="4" y="3.5" width="2.8" height="9" rx="0.8"/><rect x="9.2" y="3.5" width="2.8" height="9" rx="0.8"/></svg>
+            </button>
+            <button type="button" id="seek-forward" class="transport-btn" title="Forward 1 second" aria-label="Forward 1 second">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6.5 4 10.5 8l-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 4v8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            </button>
+
+            <div class="transport-meta">
+              <span id="clock" class="clock">0:00.00</span>
+              <span class="transport-divider">/</span>
+              <span id="duration" class="duration">0:00.00</span>
+            </div>
+
+            <div class="volume-wrap" title="Volume">
+              <button type="button" id="mute" class="transport-btn" aria-label="Mute" aria-pressed="false">
+                <svg class="icon-volume" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <path d="M2.5 6.2h2.2L7.8 4v8L4.7 9.8H2.5V6.2Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+                  <path d="M9.6 6.2a2.4 2.4 0 0 1 0 3.6M11.2 4.8a4.4 4.4 0 0 1 0 6.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                </svg>
+                <svg class="icon-muted" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" hidden>
+                  <path d="M2.5 6.2h2.2L7.8 4v8L4.7 9.8H2.5V6.2Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+                  <path d="M10 6.2 13.2 9.4M13.2 6.2 10 9.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                </svg>
+              </button>
+              <input id="volume" class="volume" type="range" min="0" max="1" step="0.01" value="1" aria-label="Volume">
+            </div>
+
+            <button type="button" id="exact" class="transport-btn transport-exact" title="Show exact Resolve frame">Exact</button>
+          </div>
+        </div>
+      </section>
+    </aside>
+
+    <div class="work">
+      <section class="inspector" aria-label="Inspector">
+        <div class="inspector-top">
+          <div>
+            <h2 class="inspector-title">Inspector</h2>
+            <p class="hint" id="inspector-hint">Media, style, edits, and export.</p>
+          </div>
+          <span id="files-ready" class="inspector-status">Waiting</span>
+        </div>
+
+        <div class="inspector-tabs" role="tablist" aria-label="Inspector sections">
+          <button type="button" class="inspector-tab is-active" role="tab" aria-selected="true" data-tab="media">Media</button>
+          <button type="button" class="inspector-tab" role="tab" aria-selected="false" data-tab="style">Style</button>
+          <button type="button" class="inspector-tab" role="tab" aria-selected="false" data-tab="edit">Edit</button>
+          <button type="button" class="inspector-tab" role="tab" aria-selected="false" data-tab="export">Export</button>
+        </div>
+
+        <div class="inspector-body">
+          <div class="inspector-pane is-active" id="tab-media" data-tab-panel="media" role="tabpanel">
+            <div class="file-grid">
+              <label class="drop" id="audio-drop">
+                <span class="drop-icon" aria-hidden="true">
+                  <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
+                    <path d="M7 18.5c-2.2 0-4-1.7-4-3.8 0-1.8 1.2-3.3 2.9-3.7A5.5 5.5 0 0 1 16.7 8a4.3 4.3 0 0 1 8.1 2.1c0 .2 0 .4-.1.6A3.8 3.8 0 0 1 21.5 18.5H7Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+                    <path d="M14 12.5v7M11 16l3 3 3-3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+                <span class="drop-kicker">Voiceover</span>
+                <strong>Audio</strong>
+                <span class="drop-copy">WAV, MP3, M4A, AAC</span>
+                <span class="drop-file" id="audio-file-label">No file chosen</span>
+                <input id="audio-file" type="file" accept="audio/*,.wav,.mp3,.m4a,.aac">
+                <input id="audio-path" type="text" placeholder="Full path…" autocomplete="off">
+              </label>
+              <label class="drop" id="srt-drop">
+                <span class="drop-icon" aria-hidden="true">
+                  <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
+                    <rect x="6" y="4.5" width="16" height="19" rx="3" stroke="currentColor" stroke-width="1.6"/>
+                    <path d="M10 10h8M10 14h8M10 18h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                  </svg>
+                </span>
+                <span class="drop-kicker">Subtitles</span>
+                <strong>SRT</strong>
+                <span class="drop-copy">Your transcript</span>
+                <span class="drop-file" id="srt-file-label">No file chosen</span>
+                <input id="srt-file" type="file" accept=".srt,text/plain">
+                <input id="srt-path" type="text" placeholder="Full path…" autocomplete="off">
+              </label>
+            </div>
+          </div>
+
+          <div class="inspector-pane" id="tab-style" data-tab-panel="style" role="tabpanel" hidden>
+            <div class="inspector-pane-head">
+              <p class="hint" id="style-hint">Live preview. Save to keep.</p>
+              <div class="row tight">
+                <button type="button" id="reset-settings" class="btn btn-ghost">Reset</button>
+                <button type="button" id="save-settings" class="btn btn-secondary">Save style</button>
+              </div>
+            </div>
+            <p id="style-dirty" class="dirty-note" hidden>Unsaved preview</p>
+            <div id="settings" class="style-board"></div>
+          </div>
+
+          <div class="inspector-pane" id="words-panel" data-tab-panel="edit" role="tabpanel" hidden>
+            <div class="inspector-pane-head">
+              <p class="hint" id="words-summary-hint">Fix flagged words and timings.</p>
+              <div class="words-toolbar">
+                <button type="button" id="expand-cues" class="btn btn-ghost">Expand</button>
+                <button type="button" id="collapse-cues" class="btn btn-ghost">Collapse</button>
+              </div>
+            </div>
+            <div id="editor" class="editor"></div>
+          </div>
+
+          <div class="inspector-pane" id="tab-export" data-tab-panel="export" role="tabpanel" hidden>
+            <label class="field">
+              <span>Output</span>
+              <input id="output-path" type="text" value="output/subtitles.mov">
+            </label>
+            <p class="hint export-hint">Transparent ProRes/QuickTime for Resolve. If you see a black box, use QuickTime Animation.</p>
+          </div>
+        </div>
+
+        <div class="inspector-footer">
+          <div class="inspector-secondary">
+            <button type="button" id="open" class="btn btn-ghost">Load</button>
+            <button type="button" id="align" class="btn btn-ghost">Align</button>
+            <button type="button" id="save" class="btn btn-ghost">Save</button>
+            <button type="button" id="export" class="btn btn-ghost">Export</button>
+          </div>
+          <button type="button" id="inspector-primary" class="btn btn-accent inspector-primary">Load files</button>
+        </div>
+
+        <div id="progress-panel" class="inspector-log" hidden>
+          <div class="inspector-log-head">
+            <span>Job log</span>
+            <button type="button" id="close-log" class="btn btn-ghost">Hide</button>
+          </div>
+          <pre id="log"></pre>
+        </div>
+      </section>
+    </div>
+  </main>
+  <script src="/app.js"></script>
+</body>
+</html>
